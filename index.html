@@ -399,6 +399,35 @@
             }
         }
     </script>
+<audio id="bgMusic" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
 
+    <div class="music-player" id="playerBox" onclick="toggleMusic()">
+        <div class="vinyl">♪</div>
+        <div class="track-info" id="trackText">Включить вайб</div>
+    </div>
+
+    <script>
+        const audio = document.getElementById('bgMusic');
+        const playerBox = document.getElementById('playerBox');
+        const trackText = document.getElementById('trackText');
+        
+        // Ставим комфортную фоновую громкость (35%)
+        audio.volume = 0.35;
+
+        function toggleMusic() {
+            if (audio.paused) {
+                audio.play();
+                playerBox.classList.add('playing');
+                trackText.innerText = 'Играет наш трек...';
+            } else {
+                audio.pause();
+                playerBox.classList.remove('playing');
+                trackText.innerText = 'Пауза';
+            }
+        }
+    </script>
+    
 </body>
 </html>

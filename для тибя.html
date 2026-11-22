@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Наши Моменты | Архив</title>
+    <link href="https://googleapis.com" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --grid-color: #d0e1f9;
+            --ink-color: #2b2d42;
+            --accent-pink: #ff4d6d;
+            --tape-color: rgba(255, 235, 150, 0.75);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 25px 25px;
+            color: var(--ink-color);
+            font-family: 'JetBrains Mono', monospace;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        @keyframes boil {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(1px, -1px) rotate(-0.4deg); }
+            50% { transform: translate(-1px, 1px) rotate(0.4deg); }
+            75% { transform: translate(1px, 1px) rotate(-0.2deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: boil 0.6s infinite;
+        }
+
+        h1 {
+            font-family: 'Caveat', cursive;
+            font-size: 4rem;
+            color: var(--ink-color);
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 35px;
+            width: 100%;
+            max-width: 1000px;
+            margin-bottom: 60px;
+        }
+
+        .card-container {
+            perspective: 1000px;
+            height: 320px;
+            cursor: pointer;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .card-container:nth-child(odd) .card { transform: rotate(-1.5deg); }
+        .card-container:nth-child(even) .card { transform: rotate(1.5deg); }
+
+        .card-container.flipped .card {
+            transform: rotateY(180deg) !important;
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            background: #fff;
+            border: 2px solid var(--ink-color);
+            border-radius: 4px;
+            padding: 25px;
+            box-shadow: 6px 6px 0px rgba(43, 45, 66, 0.15);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-face::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-2deg);
+            width: 90px;
+            height: 24px;
+            background-color: var(--tape-color);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .card-back {
+            background: #fff9db;
+            transform: rotateY(180deg);
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .date-tag {
+            font-size: 0.75rem;
+            color: var(--accent-pink);
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .moment-title {
+            font-family: 'Caveat', cursive;
+            font-size: 2rem;
+            margin: 10px 0;
+            line-height: 1.1;
+        }
+
+        .moment-text {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #495057;
+        }
+
+        .hint {
+            font-size: 0.7rem;
+            color: #adb5bd;
+            text-align: right;
+        }
+
+        .add-box {
+            background: #fff;
+            border: 2px solid var(--ink-color);
+            padding: 25px;
+            border-radius: 6px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 6px 6px 0px var(--ink-color);
+            text-align: center;
+        }
+
+        .add-box h3 {
+            font-family: 'Caveat', cursive;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 80px;
+            padding: 10px;
+            border: 2px dashed #adb5bd;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            resize: none;
+            margin-bottom: 15px;
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: var(--accent-pink);
+        }
+
+        button {
+            background: var(--ink-color);
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: var(--accent-pink);
+            transform: translateY(-2px);
+        }
+
+        #status {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            min-height: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Наши Моменты &lt;3</h1>
+        <p class="subtitle">[ Нажми на любую карточку, чтобы перевернуть её ]</p>
+    </header>
+
+    <div class="board">
+        
+        <!-- КАРТОЧКА 1 -->
+        <div class="card-container" onclick="this.classList.toggle('flipped')">
+            <div class="card">
+                <div class="card-face">
+                    <div>
+                        <div class="date-tag">15 Октября // Начало</div>
+                        <div class="moment-title">Твои записочки</div>
+                        <p class="moment-text">«Твое сообщение делает даже самую мрачную среду поводом для радости».</p>
+                    </div>
+                    <div class="hint">кликни чтобы перевернуть ↻</div>
+                </div>
+                <div class="card-face card-back">
+                    <p class="moment-text"><b>За кулисами:</b><br><br>Именно после этих каракулей на клетчатых листках я решил сделать для тебя целую серию мини-программ.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- КАРТОЧКА 2 -->
+        <div class="card-container" onclick="this.classList.toggle('flipped')">
+            <div class="card">
+                <div class="card-face">
+                    <div>
+                        <div class="date-tag">Созвон в Discord</div>
+                        <div class="moment-title">Тот самый вечер</div>
+                        <p class="moment-text">Когда мы созвонились, я чуть не расплакался от радости. Это чистая правда.</p>
+                    </div>
+                    <div class="hint">кликни чтобы перевернуть ↻</div>
+                </div>
+                <div class="card-face card-back">
+                    <p class="moment-text"><b>Секретная заметка:</b><br><br>Ни одна игра и ни один код не сравнятся с тем, чтобы просто слышать твой голос.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- КАРТОЧКА 3 (ЧИСТАЯ РОМАНТИКА) -->
+        <div class="card-container" onclick="this.classList.toggle('flipped')">
+            <div class="card">
+                <div class="card-face">
+                    <div>
+                        <div class="date-tag">Записка в траве</div>
+                        <div class="moment-title">Моё солнце</div>
+                        <p class="moment-text">«В моем мире может быть сколько угодно звезд, но греет меня только твое солнце».</p>
+                    </div>
+                    <div class="hint">кликни чтобы перевернуть ↻</div>
+                </div>
+                <div class="card-face card-back">
+                    <p class="moment-text"><b>Просто факт:</b><br><br>Ты — мой главный источник света и тепла, что бы ни происходило вокруг. &lt;3</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- КАРТОЧКА 4 -->
+        <div class="card-container" onclick="this.classList.toggle('flipped')">
+            <div class="card">
+                <div class="card-face">
+                    <div>
+                        <div class="date-tag">22 Ноября // Зима</div>
+                        <div class="moment-title">Вместе греемся</div>
+                        <p class="moment-text">За окном уже настоящая зима и минус, но с тобой внутри всегда бесконечное лето.</p>
+                    </div>
+                    <div class="hint">кликни чтобы перевернуть ↻</div>
+                </div>
+                <div class="card-face card-back">
+                    <p class="moment-text"><b>План на будущее:</b><br><br>Любить тебя только сильнее! &lt;3</p>
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- Закрыли сетку карточек -->
+
+    <div class="add-box">
+        <h3>Вписать новый момент</h3>
+        <p class="moment-text" style="margin-bottom: 15px;">Напиши сюда любую мысль или воспоминание — оно сразу улетит ко мне на телефон:</p>
+        <textarea id="momentInput" placeholder="Например: Помнишь как мы сегодня..."></textarea>
+        <button onclick="sendMoment()">Отправить в архив</button>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        const BOT_TOKEN = "8895037514:AAG_cv040HlB6B_CRPIPPHvdpIpJ5U6HDKc";
+        const MY_CHAT_ID = "1431219461";
+        const PROXY_URL = "https://tgprox.ankudinovdaniil38.workers.dev/";
+
+        async function sendMoment() {
+            const input = document.getElementById('momentInput');
+            const status = document.getElementById('status');
+            const text = input.value.trim();
+
+            if (!text) {
+                status.style.color = '#ff4d6d';
+                status.innerText = 'Сначала напиши хоть пару слов!';
+                return;
+            }
+
+            status.style.color = '#6c757d';
+            status.innerText = 'Отправляю в наш архив...';
+
+            const fullMessage = `📒 [Сайт: Сборник моментов]\nОна хочет добавить новую карточку:\n\n"${text}"`;
+            const targetUrl = `${PROXY_URL}bot${BOT_TOKEN}/sendMessage?chat_id=${MY_CHAT_ID}&text=${encodeURIComponent(fullMessage)}`;
+
+            try {
+                const response = await fetch(targetUrl);
+                if (response.ok) {
+                    status.style.color = '#2b9348';
+                    status.innerText = 'Готово! Записка уже у меня в телефоне <3';
+                    input.value = '';
+                } else {
+                    throw new Error('Ошибка сервера');
+                }
+            } catch (error) {
+                status.style.color = '#ff4d6d';
+                status.innerText = 'Не удалось отправить. Проверь токен бота или интернет!';
+            }
+        }
+    </script>
+
+</body>
+</html>

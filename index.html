@@ -209,6 +209,70 @@
             font-size: 0.8rem;
             min-height: 20px;
         }
+
+                /* Уютный мини-плеер в правом нижнем углу */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #fff;
+            border: 2px solid var(--ink-color);
+            border-radius: 50px;
+            padding: 8px 18px 8px 10px;
+            box-shadow: 4px 4px 0px var(--ink-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            user-select: none;
+        }
+
+        .music-player:hover {
+            transform: translateY(-2px);
+            background: #fff9db;
+        }
+
+        /* Крутящаяся пластинка */
+        .vinyl {
+            width: 32px;
+            height: 32px;
+            background: var(--ink-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .vinyl::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--accent-pink);
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Анимация вращения, когда музыка играет */
+        .music-player.playing .vinyl {
+            animation: spin 3s linear infinite;
+        }
+
+        .track-info {
+            font-family: 'Caveat', cursive;
+            font-size: 1.3rem;
+            color: var(--ink-color);
+            line-height: 1;
+        }
+
     </style>
 </head>
 <body>

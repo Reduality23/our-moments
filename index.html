@@ -273,6 +273,25 @@
             line-height: 1;
         }
 
+        .next-btn {
+            background: none;
+            border: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: bold;
+            font-size: 1rem;
+            color: var(--ink-color);
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        .next-btn:hover {
+            color: var(--accent-pink);
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+
     </style>
 </head>
 <body>
@@ -399,33 +418,62 @@
             }
         }
     </script>
-<audio id="bgMusic" loop>
-        <source src="music.mp3" type="audio/mpeg">
-    </audio>
+<!-- ОБНОВЛЕННЫЙ ВИДЖЕТ ПЛЕЙЛИСТА -->
+    <audio id="bgMusic"></audio>
 
-    <div class="music-player" id="playerBox" onclick="toggleMusic()">
-        <div class="vinyl">♪</div>
-        <div class="track-info" id="trackText">Включить вайб</div>
+    <div class="music-player" id="playerBox">
+        <!-- Клик по пластинке или названию ставит на паузу / запускает -->
+        <div style="display: flex; align-items: center; gap: 10px;" onclick="toggleMusic()">
+            <div class="vinyl">♪</div>
+            <div class="track-info" id="trackText">Включить плейлист</div>
+        </div>
+        <!-- Кнопка переключения на следующий трек -->
+        <button class="next-btn" onclick="nextTrack()" title="Следующий трек">⏭</button>
     </div>
 
     <script>
+        // =========================================================================
+        // НАСТРОЙКА ПЛЕЙЛИСТА (Впиши сюда имена своих файлов и красивые названия)
+        // =========================================================================
+        const playlist = [
+            { file: "track1.mp3", title: "Displayholic" },
+            { file: "track2.mp3", title: "melt ice cream" },
+            { file: "track3.mp3", title: "how to make a faith" }
+        ];
+
+        let currentTrackIndex = 0;
         const audio = document.getElementById('bgMusic');
         const playerBox = document.getElementById('playerBox');
         const trackText = document.getElementById('trackText');
         
-        // Ставим комфортную фоновую громкость (35%)
+        // Комфортная фоновая громкость (35%)
         audio.volume = 0.35;
+        // Загружаем первый трек при старте
+        audio.src = playlist[currentTrackIndex].file;
+
+        // Автопереключение на следующую песню, когда текущая закончилась
+        audio.addEventListener('ended', nextTrack);
 
         function toggleMusic() {
             if (audio.paused) {
                 audio.play();
                 playerBox.classList.add('playing');
-                trackText.innerText = 'Играет наш трек...';
+                trackText.innerText = playlist[currentTrackIndex].title;
             } else {
                 audio.pause();
                 playerBox.classList.remove('playing');
                 trackText.innerText = 'Пауза';
             }
+        }
+
+        function nextTrack() {
+            // Переходим к следующему индексу (если дошли до конца — возвращаемся в начало)
+            currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+            audio.src = playlist[currentTrackIndex].file;
+            
+            audio.play();
+            playerBox.classList.add('playing');
+            trackText.innerText = playlist[currentTrackIndex].title;
         }
     </script>
     

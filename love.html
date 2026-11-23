@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для тебя <3</title>
+    <link href="https://googleapis.com" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --grid-color: #d0e1f9;
+            --ink-color: #2b2d42;
+            --heart-color: #ff4d6d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 25px 25px;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'JetBrains Mono', monospace;
+            position: relative;
+        }
+
+        /* Кнопка возврата на главный сайт */
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            text-decoration: none;
+            color: var(--ink-color);
+            background: #fff;
+            border: 2px solid var(--ink-color);
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            box-shadow: 3px 3px 0px var(--ink-color);
+            z-index: 100;
+            transition: transform 0.1s;
+        }
+
+        .back-link:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px var(--ink-color);
+        }
+
+        /* Пульсация главного сердца */
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        .main-heart {
+            font-size: 110px;
+            color: var(--heart-color);
+            cursor: pointer;
+            animation: heartbeat 1.4s infinite ease-in-out;
+            filter: drop-shadow(4px 6px 0px rgba(43, 45, 66, 0.2));
+            transition: transform 0.1s;
+            z-index: 10;
+            line-height: 1;
+        }
+
+        .main-heart:active {
+            transform: scale(0.9) !important;
+        }
+
+        .hint {
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: #6c757d;
+            z-index: 10;
+            transition: opacity 0.4s;
+        }
+
+        /* Главная фраза */
+        .love-text {
+            font-family: 'Caveat', cursive;
+            font-size: 3.2rem;
+            color: var(--ink-color);
+            text-align: center;
+            margin-top: 25px;
+            padding: 0 20px;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            z-index: 10;
+            text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.8);
+        }
+
+        .love-text.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Падающие сердечки */
+        .falling-heart {
+            position: fixed;
+            top: -50px;
+            color: var(--heart-color);
+            pointer-events: none;
+            z-index: 5;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-link">← К моментам</a>
+
+    <div class="main-heart" id="heartBtn" onclick="triggerLove()">❤</div>
+    <div class="hint" id="hintText">[ нажми на сердечко ]</div>
+    <div class="love-text" id="loveMessage">я тебя очень сильно люблю!>:3</div>
+
+    <script>
+        let isRainStarted = false;
+
+        function triggerLove() {
+            // Показываем надпись и прячем подсказку
+            document.getElementById('loveMessage').classList.add('visible');
+            document.getElementById('hintText').style.opacity = '0';
+
+            // Сразу выдаем залп из 25 сердечек при каждом нажатии
+            for (let i = 0; i < 25; i++) {
+                setTimeout(createFallingHeart, i * 40);
+            }
+
+            // Запускаем постоянный мягкий дождь из сердечек после первого клика
+            if (!isRainStarted) {
+                isRainStarted = true;
+                setInterval(createFallingHeart, 250);
+            }
+        }
+
+        function createFallingHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('falling-heart');
+            
+            // Разные варианты сердечек для красоты
+            const symbols = ['❤', '♥', '♡', '💕'];
+            heart.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+            
+            // Случайная позиция по ширине, размер и скорость падения
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (Math.random() * 20 + 16) + 'px';
+            
+            const duration = Math.random() * 2.5 + 2.5; // от 2.5 до 5 секунд
+            heart.style.animationDuration = duration + 's';
+            
+            // Случайный оттенок розового/красного
+            const colors = ['#ff4d6d', '#ff758f', '#c9184a', '#ff8fa3'];
+            heart.style.color = colors[Math.floor(Math.random() * colors.length)];
+
+            document.body.appendChild(heart);
+
+            // Удаляем элемент после падения, чтобы не нагружать телефон
+            setTimeout(() => {
+                heart.remove();
+            }, duration * 1000);
+        }
+    </script>
+
+</body>
+</html>

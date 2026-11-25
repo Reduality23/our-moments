@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Очень скучаю по тебе</title>
+    <link href="https://googleapis.com" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #1e1e2e;
+            --grid-color: rgba(255, 255, 255, 0.06);
+            --text-color: #cdd6f4;
+            --accent: #f38ba8;
+            --card-bg: #2a2b3d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 25px 25px;
+            color: var(--text-color);
+            font-family: 'JetBrains Mono', monospace;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            text-decoration: none;
+            color: var(--text-color);
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            z-index: 100;
+        }
+
+        @keyframes floatEmoji {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-6px) scale(1.05); }
+        }
+
+        .sketch-box {
+            background: var(--card-bg);
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 35px 25px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+        }
+
+        /* Большой анимированный смайлик */
+        .emoji-hero {
+            font-size: 75px;
+            line-height: 1;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: floatEmoji 2.5s ease-in-out infinite;
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        h1 {
+            font-family: 'Caveat', cursive;
+            font-size: 2.8rem;
+            color: #fff;
+            margin-bottom: 12px;
+            line-height: 1.1;
+        }
+
+        p {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #bac2de;
+            margin-bottom: 25px;
+        }
+
+        .miss-btn {
+            background: var(--accent);
+            color: #11111b;
+            border: none;
+            padding: 14px 28px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: bold;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: 0 4px 15px rgba(243, 139, 168, 0.3);
+            width: 100%;
+        }
+
+        .miss-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(243, 139, 168, 0.5);
+        }
+
+        .miss-btn:active {
+            transform: scale(0.97);
+        }
+
+        #replyStatus {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            min-height: 20px;
+            color: #a6e3a1;
+            font-weight: bold;
+        }
+
+        .floating-particle {
+            position: fixed;
+            bottom: -20px;
+            pointer-events: none;
+            animation: floatUp 3s ease-out forwards;
+            z-index: 5;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-100vh) scale(1.4); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-link">← На главную</a>
+
+    <div class="sketch-box">
+        <div class="emoji-hero" id="emojiHero">🥺</div>
+
+        <h1>Я очень по тебе скучаю</h1>
+        <p>
+            Вечер без тебя тянется слишком долго. Просто хотел напомнить, что думаю о тебе прямо сейчас. <br><br>
+            Жду момента, когда снова смогу тебя обнять.
+        </p>
+
+        <button class="miss-btn" id="missBtn" onclick="hugAnimation()">Я тоже скучаю &lt;3</button>
+        <div id="replyStatus"></div>
+    </div>
+
+    <script>
+        function hugAnimation() {
+            const btn = document.getElementById('missBtn');
+            const status = document.getElementById('replyStatus');
+            const emoji = document.getElementById('emojiHero');
+
+            // Меняем грустный смайлик на обнимашки
+            emoji.innerText = '🫂';
+            emoji.style.transform = 'scale(1.2)';
+
+            btn.innerText = 'Задушил бы тебя сейчас <3';
+             status.innerText = 'Скоро увидимся, солнце';
+
+
+            for (let i = 0; i < 30; i++) {
+                setTimeout(spawnParticle, i * 50);
+            }
+        }
+
+        function spawnParticle() {
+            const el = document.createElement('div');
+            el.classList.add('floating-particle');
+            const items = ['❤', '✨', '♡', '🫂'];
+            el.innerText = items[Math.floor(Math.random() * items.length)];
+            el.style.left = Math.random() * 100 + 'vw';
+            el.style.fontSize = (Math.random() * 18 + 14) + 'px';
+            el.style.color = '#f38ba8';
+            document.body.appendChild(el);
+
+            setTimeout(() => el.remove(), 3000);
+        }
+    </script>
+
+</body>
+</html>

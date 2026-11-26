@@ -361,7 +361,7 @@
             <div class="card">
                 <div class="card-face">
                     <div>
-                        <div class="date-tag">22 Ноября // Зима</div>
+                        <div class="date-tag" id="liveDate">Загрузка даты...</div>
                         <div class="moment-title">Вместе греемся</div>
                         <p class="moment-text">За окном уже настоящая зима и минус, но с тобой внутри всегда бесконечное лето.</p>
                     </div>
@@ -499,6 +499,30 @@
             playerBox.classList.add('playing');
             trackText.innerText = playlist[currentTrackIndex].title;
         }
+
+
+                // Автоматическая подстановка сегодняшней даты
+        const dateElement = document.getElementById('liveDate');
+        if (dateElement) {
+            const now = new Date();
+            const months = [
+                'Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня',
+                'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'
+            ];
+            
+            const day = now.getDate();
+            const month = months[now.getMonth()];
+            
+            // Определяем время года автоматически
+            const m = now.getMonth();
+            let season = 'Зима';
+            if (m >= 2 && m <= 4) season = 'Весна';
+            else if (m >= 5 && m <= 7) season = 'Лето';
+            else if (m >= 8 && m <= 10) season = 'Осень';
+
+            dateElement.innerText = `${day} ${month} // ${season}`;
+        }
+
     </script>
     
 </body>
